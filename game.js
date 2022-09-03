@@ -2,13 +2,20 @@ const buttonColours = ["red", "blue", "green", "yellow"];
 let userClickedPattern = [];
 var gamePattern = [];
 
-var username = "Emre";
 let leaderBoard = JSON.parse(localStorage.getItem("leaderBoard")) || [];
 var added = false;
 var started = false;
 let level = 0;
+var leaderName = "";
+var leaderValue = 0;
+
+let username;
+
+showName();
 
 function addLeaderBoard() {
+  console.log(username);
+
   const user = {
     name: username,
     value: level,
@@ -17,7 +24,7 @@ function addLeaderBoard() {
   leaderBoard = leaderBoard.map((lead) => {
     if (lead.name === username) {
       added = true;
-      return { ...lead, value: level };
+      if (lead.value < level) return { ...lead, value: level };
     }
 
     return lead;
@@ -29,6 +36,17 @@ function addLeaderBoard() {
   }
 
   localStorage.setItem("leaderBoard", JSON.stringify(leaderBoard));
+}
+
+function showName() {
+  leaderBoard.map((lead) => {
+    if (lead.value > leaderValue) {
+      leaderValue = lead.value;
+      leaderName = lead.name;
+    }
+  });
+
+  $(".btnT p").text(leaderName + ": " + leaderValue);
 }
 
 $(document).keypress(function () {
@@ -100,8 +118,14 @@ function animatePress(currentColour) {
 
 function startOver() {
   addLeaderBoard();
+  showName();
   level = 0;
   gamePattern = [];
   userClickedPattern = [];
   started = false;
 }
+
+$(".begin").on("click", function () {
+  username = $("#usern").val();
+  $(".slide").slideToggle(); // it slideIn and slideOut
+});
