@@ -2,8 +2,34 @@ const buttonColours = ["red", "blue", "green", "yellow"];
 let userClickedPattern = [];
 var gamePattern = [];
 
+var username = "Emre";
+let leaderBoard = JSON.parse(localStorage.getItem("leaderBoard")) || [];
+var added = false;
 var started = false;
 let level = 0;
+
+function addLeaderBoard() {
+  const user = {
+    name: username,
+    value: level,
+  };
+
+  leaderBoard = leaderBoard.map((lead) => {
+    if (lead.name === username) {
+      added = true;
+      return { ...lead, value: level };
+    }
+
+    return lead;
+  });
+
+  if (!added) {
+    leaderBoard.push(user);
+    added = false;
+  }
+
+  localStorage.setItem("leaderBoard", JSON.stringify(leaderBoard));
+}
 
 $(document).keypress(function () {
   if (!started) {
@@ -25,8 +51,6 @@ $(".btn").click(function () {
 });
 
 function checkAnswer(currentLevel) {
-  console.log(gamePattern);
-  console.log(userClickedPattern);
   if (gamePattern[currentLevel] === userClickedPattern[currentLevel]) {
     if (gamePattern.length === userClickedPattern.length) {
       setTimeout(() => {
@@ -75,6 +99,7 @@ function animatePress(currentColour) {
 }
 
 function startOver() {
+  addLeaderBoard();
   level = 0;
   gamePattern = [];
   userClickedPattern = [];
